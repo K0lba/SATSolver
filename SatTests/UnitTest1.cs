@@ -4,7 +4,7 @@ namespace SatTests
 {
     public class Tests
     {
-        private string path = "C://Users//aruds//source//repos//SATSolver//SATSolver//Problems//";
+        private string path = @"Problems//";
 
         [Test]
         public void UNSAT1()
