@@ -22,24 +22,29 @@
 
             var clauseCopy = new Clauses();
             var clauseNegativeCopy = new Clauses();
-            Chosoe_Literal(resClause, clauses, clauseCopy, clauseNegativeCopy);
-            return DPLL(clauseCopy, resClause) || DPLL(clauseNegativeCopy, resClause);
+            var resCopy = new Clause();
+            Chosoe_Literal(resClause, clauses, clauseCopy, clauseNegativeCopy, resCopy);
+            return DPLL(clauseCopy, resCopy) || DPLL(clauseNegativeCopy, resCopy);
         }
 
-        private static void Chosoe_Literal(Clause resClause, Clauses clauses, Clauses clauseCopy, Clauses clauseNegativeCopy)
+        private static void Chosoe_Literal(Clause resClause, Clauses clauses, Clauses clauseCopy, Clauses clauseNegativeCopy, Clause resCopy)
         {
             var new_lit = clauses.Data[0].Data[0];
             foreach (var clause in clauses.Data)
             {
-                clauseCopy.Add(clause);
+                var copy = new int[clause.Data.Count];
+                clause.Data.CopyTo(copy);
+
+                clauseCopy.Add(new Clause(copy.ToList()));
+                clauseNegativeCopy.Add(new Clause(copy.ToList()));
             }
+
+            var copyRes = new int[resClause.Data.Count];
+            resClause.Data.CopyTo(copyRes);
+            copyRes = copyRes.ToHashSet().ToArray();
+            resCopy.Add(copyRes.ToList());
 
             clauseCopy.Add(new Clause(new_lit));
-            foreach (var clause in clauses.Data)
-            {
-                clauseNegativeCopy.Add(clause);
-            }
-
             clauseNegativeCopy.Add(new Clause(-new_lit));
         }
 
@@ -90,7 +95,7 @@
                 pure_l.Add(let);
             }
 
-            var temp = new Clauses();
+            //var temp = new Clauses();
             foreach (var clause in clauses.Data.ToList())
             {
                 foreach (var variable in clause.Data)
