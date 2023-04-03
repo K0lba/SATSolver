@@ -23,16 +23,6 @@
         public void Solve()
         {
             (this.Solved, this.Solution) = Solver.DPLL(this.Formula, this.Solution);
-            /*var set = Solution.Data.ToHashSet<int>();
-            foreach (int literal in set)
-            {
-                if (set.Contains(-literal))
-                {
-                    set.Remove(-literal);
-                }
-            }
-            Solution.Data = set.ToList();*/
-            //Solution.Data = Solution.Data.ToHashSet<int>().ToList();
             if (this.Solved && CheckSolution.Check(this.Solution, this.FormCop))
             {
                 Console.WriteLine("s SATISFIABLE");

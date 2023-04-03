@@ -2,9 +2,8 @@
 {
     internal class Solver
     {
-        public static (bool, Clause) DPLL(Formula formula, Clause solution)
+        public static(bool, Clause) DPLL(Formula formula, Clause solution)
         {
-            //solution.Data = solution.Data.ToHashSet().ToList();
             Unit_Propagate(solution, formula);
             Pure_Literal_Assign(solution, formula);
 
@@ -26,11 +25,12 @@
             var resCopy = new Clause();
             var resCopy1 = new Clause();
             Chosoe_Literal(solution, formula, clauseCopy, clauseNegativeCopy, resCopy, resCopy1);
-            var (solve, res) = DPLL(clauseCopy, resCopy);
+            var(solve, res) = DPLL(clauseCopy, resCopy);
             if (solve)
             {
                 return (solve, res);
             }
+
             return DPLL(clauseNegativeCopy, resCopy1);
         }
 
@@ -40,18 +40,10 @@
 
             foreach (Clause clause in clauses)
             {
-                /*var copy = new int[clause.Count];
-                clause.Data.CopyTo(copy);
-
-                clauseCopy.Add(new Clause(copy.ToList()));
-                clauseNegativeCopy.Add(new Clause(copy.ToList()));*/
                 clauseCopy.Add(new Clause(clause.Data));
                 clauseNegativeCopy.Add(new Clause(clause.Data));
             }
 
-
-            /*clauseCopy.Clauses = clauses.Copy();
-            clauseNegativeCopy.Clauses = clauses.Copy();*/
             clauseCopy.Add(new Clause(new_lit));
             clauseNegativeCopy.Add(new Clause(-new_lit));
             solution.Data = solution.Data.ToHashSet<int>().ToList();
@@ -73,7 +65,6 @@
                     solution.Add(clause[0]);
                 }
             }
-            
 
             foreach (int lit in temp)
             {
@@ -86,6 +77,7 @@
                     }
                 }
             }
+
             solution.Data = solution.Data.ToHashSet().ToList();
         }
 
