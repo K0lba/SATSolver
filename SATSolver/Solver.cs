@@ -22,23 +22,12 @@
 
             var clauseCopy = new Formula();
             var clauseNegativeCopy = new Formula();
-            var resCopy = new Clause();
-            var resCopy1 = new Clause();
-            Chosoe_Literal(solution, formula, clauseCopy, clauseNegativeCopy, resCopy, resCopy1);
-            var(solve, res) = DPLL(clauseCopy, resCopy);
-            if (solve)
-            {
-                return (solve, res);
-            }
+            var resCopyForPos = new Clause();
+            var resCopyForNeg = new Clause();
 
-            return DPLL(clauseNegativeCopy, resCopy1);
-        }
+            var new_lit = formula.Clauses[0].Data[0];
 
-        private static void Chosoe_Literal(Clause solution, Formula clauses, Formula clauseCopy, Formula clauseNegativeCopy, Clause resCopy, Clause resCopy1)
-        {
-            var new_lit = clauses.Clauses[0].Data[0];
-
-            foreach (Clause clause in clauses)
+            foreach (Clause clause in formula)
             {
                 clauseCopy.Add(new Clause(clause.Data));
                 clauseNegativeCopy.Add(new Clause(clause.Data));
@@ -49,9 +38,17 @@
             solution.Data = solution.Data.ToHashSet<int>().ToList();
             foreach (int literal in solution)
             {
-                resCopy.Add(literal);
-                resCopy1.Add(literal);
+                resCopyForPos.Add(literal);
+                resCopyForNeg.Add(literal);
             }
+
+            var (solve, res) = DPLL(clauseCopy, resCopyForPos);
+            if (solve)
+            {
+                return (solve, res);
+            }
+
+            return DPLL(clauseNegativeCopy, resCopyForNeg);
         }
 
         private static void Unit_Propagate(Clause solution, Formula formula)
