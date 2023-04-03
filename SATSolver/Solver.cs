@@ -2,107 +2,121 @@
 {
     internal class Solver
     {
-        public static bool DPLL(Clauses clauses, Clause resClause)
+        public static (bool, Clause) DPLL(Formula formula, Clause solution)
         {
-            Unit_Propagate(resClause, clauses);
-            Pure_Literal_Assign(resClause, clauses);
+            //solution.Data = solution.Data.ToHashSet().ToList();
+            Unit_Propagate(solution, formula);
+            Pure_Literal_Assign(solution, formula);
 
-            if (clauses.Data.Count == 0)
+            if (formula.Count == 0)
             {
-                return true;
+                return (true, solution);
             }
 
-            foreach (var clause in clauses.Data)
+            foreach (Clause clause in formula)
             {
-                if (clause.Data.Count == 0)
+                if (clause.Count == 0)
                 {
-                    return false;
+                    return (false, new Clause());
                 }
             }
 
-            var clauseCopy = new Clauses();
-            var clauseNegativeCopy = new Clauses();
+            var clauseCopy = new Formula();
+            var clauseNegativeCopy = new Formula();
             var resCopy = new Clause();
-            Chosoe_Literal(resClause, clauses, clauseCopy, clauseNegativeCopy, resCopy);
-            return DPLL(clauseCopy, resCopy) || DPLL(clauseNegativeCopy, resCopy);
+            var resCopy1 = new Clause();
+            Chosoe_Literal(solution, formula, clauseCopy, clauseNegativeCopy, resCopy, resCopy1);
+            var (solve, res) = DPLL(clauseCopy, resCopy);
+            if (solve)
+            {
+                return (solve, res);
+            }
+            return DPLL(clauseNegativeCopy, resCopy1);
         }
 
-        private static void Chosoe_Literal(Clause resClause, Clauses clauses, Clauses clauseCopy, Clauses clauseNegativeCopy, Clause resCopy)
+        private static void Chosoe_Literal(Clause solution, Formula clauses, Formula clauseCopy, Formula clauseNegativeCopy, Clause resCopy, Clause resCopy1)
         {
-            var new_lit = clauses.Data[0].Data[0];
-            foreach (var clause in clauses.Data)
+            var new_lit = clauses.Clauses[0].Data[0];
+
+            foreach (Clause clause in clauses)
             {
-                var copy = new int[clause.Data.Count];
+                /*var copy = new int[clause.Count];
                 clause.Data.CopyTo(copy);
 
                 clauseCopy.Add(new Clause(copy.ToList()));
-                clauseNegativeCopy.Add(new Clause(copy.ToList()));
+                clauseNegativeCopy.Add(new Clause(copy.ToList()));*/
+                clauseCopy.Add(new Clause(clause.Data));
+                clauseNegativeCopy.Add(new Clause(clause.Data));
             }
 
-            var copyRes = new int[resClause.Data.Count];
-            resClause.Data.CopyTo(copyRes);
-            copyRes = copyRes.ToHashSet().ToArray();
-            resCopy.Add(copyRes.ToList());
 
+            /*clauseCopy.Clauses = clauses.Copy();
+            clauseNegativeCopy.Clauses = clauses.Copy();*/
             clauseCopy.Add(new Clause(new_lit));
             clauseNegativeCopy.Add(new Clause(-new_lit));
+            solution.Data = solution.Data.ToHashSet<int>().ToList();
+            foreach (int literal in solution)
+            {
+                resCopy.Add(literal);
+                resCopy1.Add(literal);
+            }
         }
 
-        private static void Unit_Propagate(Clause l, Clauses clauses)
+        private static void Unit_Propagate(Clause solution, Formula formula)
         {
-            foreach (var clause in clauses.Data)
+            var temp = new HashSet<int>();
+            foreach (Clause clause in formula)
             {
-                if (clause.Data.Count == 1)
+                if (clause.Count == 1)
                 {
-                    l.Add(clause.Data[0]);
+                    temp.Add(clause[0]);
+                    solution.Add(clause[0]);
                 }
             }
+            
 
-            foreach (var lit in l.Data)
+            foreach (int lit in temp)
             {
-                foreach (var c in clauses.Data.ToList())
+                foreach (Clause clause in formula)
                 {
-                    c.Data.Remove(-lit);
-                    if (c.Data.Contains(lit))
+                    clause.Remove(-lit);
+                    if (clause.Contains(lit))
                     {
-                        clauses.Remove(c);
+                        formula.Remove(clause);
                     }
                 }
             }
+            solution.Data = solution.Data.ToHashSet().ToList();
         }
 
-        private static void Pure_Literal_Assign(Clause l, Clauses clauses)
+        private static void Pure_Literal_Assign(Clause solution, Formula formula)
         {
             HashSet<int> variables = new HashSet<int>();
-            foreach (var clause in clauses.Data)
+            foreach (Clause clause in formula)
             {
-                foreach (var variable in clause.Data)
-                {
-                    variables.Add(variable);
-                }
+                clause.Data.ForEach(x => variables.Add(x));
             }
 
             var pure_l = new Clause();
 
-            foreach (var let in variables)
+            foreach (int literal in variables)
             {
-                if (variables.Contains(-let))
+                if (variables.Contains(-literal))
                 {
                     continue;
                 }
 
-                l.Add(let);
-                pure_l.Add(let);
+                solution.Add(literal);
+                pure_l.Add(literal);
             }
 
-            //var temp = new Clauses();
-            foreach (var clause in clauses.Data.ToList())
+            foreach (Clause clause in formula)
             {
-                foreach (var variable in clause.Data)
+                foreach (int literal in clause)
                 {
-                    if (pure_l.Contains(variable))
+                    if (pure_l.Contains(literal))
                     {
-                        clauses.Remove(clause);
+                        formula.Remove(clause);
                     }
                 }
             }

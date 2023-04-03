@@ -4,5 +4,5 @@ using SATSolver;
 
 Console.WriteLine("Hello, World!");
 
-SAT sat = new SAT(@"C:\Users\aruds\source\repos\SATSolver\SatTests\Problems\romaSat.cnf");
+SAT sat = new SAT(@"C:\Users\aruds\source\repos\SATSolver\SatTests\Problems\sat7909.cnf");
 sat.Solve();

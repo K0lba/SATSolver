@@ -2,9 +2,9 @@
 {
     internal class DIMACS_parser
     {
-        public static Clauses DIMACS(string path)
+        public static Formula DIMACS(string path)
         {
-            Clauses formula = new Clauses();
+            Formula formula = new Formula();
             using (StreamReader file = new StreamReader(path))
             {
                 string? clauseLine;
