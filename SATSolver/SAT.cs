@@ -33,6 +33,7 @@
                 }
 
                 Console.Write("0");
+                Console.WriteLine();
             }
             else
             {

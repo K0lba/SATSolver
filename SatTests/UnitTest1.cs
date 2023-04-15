@@ -36,7 +36,7 @@ namespace SatTests
         {
             SAT sat = new SAT(path + "sat2.cnf");
             sat.Solve();
-            List<int> expect = new List<int>() { 2, 1 };
+            List<int> expect = new List<int>() { 2, 1, -3};
             Assert.That(sat.Solution.Data, Is.EqualTo(expect));
         }
 
@@ -45,7 +45,7 @@ namespace SatTests
         {
             SAT sat = new SAT(path + "sat3.cnf");
             sat.Solve();
-            List<int> expect = new List<int>() { 8, 6, 4, -5, -2 };
+            List<int> expect = new List<int>() { 8, 6, 4, -5, -2, 3, -1 };
             Assert.That(sat.Solution.Data, Is.EqualTo(expect));
         }
 
