@@ -9,14 +9,23 @@
             this.Data = new List<int>();
         }
 
-        public Clause(int clause)
+        public Clause(int literal)
         {
-            this.Data = new List<int>() { clause };
+            this.Data = new List<int>() { literal };
         }
 
-        public Clause(List<int> clause)
+        public Clause(List<int> data)
         {
-            this.Data = new List<int>(clause);
+            this.Data = new List<int>(data);
+        }
+
+        public Clause(Clause clause)
+        {
+            this.Data = new List<int>();
+            foreach (int literal in clause)
+            {
+                this.Add(literal);
+            }
         }
 
         public int Count => this.Data.Count;

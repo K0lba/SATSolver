@@ -14,6 +14,15 @@
             this.Clauses = new List<Clause>() { clause };
         }
 
+        public Formula(Formula formula)
+        {
+            this.Clauses = new List<Clause>();
+            foreach (Clause clause in formula)
+            {
+                this.Add(new Clause(clause.Data));
+            }
+        }
+
         public int Count => this.Clauses.Count;
 
         public List<Clause> Clauses { get; set; }
@@ -31,11 +40,6 @@
         public void Remove(Clause clause)
         {
             this.Clauses.Remove(clause);
-        }
-
-        public List<Clause> Copy()
-        {
-            return this.Clauses;
         }
 
         public IEnumerator GetEnumerator()

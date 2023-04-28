@@ -20,35 +20,25 @@
                 }
             }
 
-            var clauseCopy = new Formula();
-            var clauseNegativeCopy = new Formula();
-            var resCopyForPos = new Clause();
-            var resCopyForNeg = new Clause();
-
+            // literal choice
             var new_lit = formula.Clauses[0].Data[0];
 
-            foreach (Clause clause in formula)
-            {
-                clauseCopy.Add(new Clause(clause.Data));
-                clauseNegativeCopy.Add(new Clause(clause.Data));
-            }
-
-            clauseCopy.Add(new Clause(new_lit));
-            clauseNegativeCopy.Add(new Clause(-new_lit));
+            // Remove repetitive
             solution.Data = solution.Data.ToHashSet<int>().ToList();
-            foreach (int literal in solution)
-            {
-                resCopyForPos.Add(literal);
-                resCopyForNeg.Add(literal);
-            }
 
-            var (solve, res) = DPLL(clauseCopy, resCopyForPos);
+            var formulaPositive = new Formula(formula)
+            {
+                new Clause(new_lit)
+            };
+            var solutionPositive = new Clause(solution);
+            var(solve, result) = DPLL(formulaPositive, solutionPositive);
             if (solve)
             {
-                return (solve, res);
+                return (solve, result);
             }
 
-            return DPLL(clauseNegativeCopy, resCopyForNeg);
+            formula.Add(new Clause(-new_lit));
+            return DPLL(formula, solution);
         }
 
         private static void Unit_Propagate(Clause solution, Formula formula)
